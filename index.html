@@ -6,58 +6,170 @@
   <title>Job Application Tracker</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f4f4f4;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #4b79a1, #283e51);
       margin: 0;
-      padding: 20px;
+      padding: 0;
     }
+
+    .container {
+      width: 90%;
+      max-width: 1000px;
+      margin: 40px auto;
+      background: rgba(255, 255, 255, 0.15);
+      padding: 25px;
+      border-radius: 20px;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      color: white;
+    }
+
     h1 {
       text-align: center;
+      margin-bottom: 25px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 600;
     }
-    .container {
-      max-width: 900px;
-      margin: auto;
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
     }
+
+    label {
+      font-weight: 500;
+    }
+
     input, select {
-      padding: 10px;
-      width: 100%;
-      margin-bottom: 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
+      padding: 12px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      font-size: 15px;
+      background: rgba(255, 255, 255, 0.85);
     }
+
+    button {
+  padding: 6px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: none;
+  background: #4a90e2;
+  color: white;
+}
+
+    button:hover {
+      background: #e68900;
+      transform: scale(1.03);
+    }
+
     table {
       width: 100%;
       border-collapse: collapse;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(5px);
+      border-radius: 15px;
+      overflow: hidden;
       margin-top: 20px;
+      table-layout: fixed; /* ensures proper column alignment */
     }
-    table, th, td {
-      border: 1px solid #ccc;
-    }
+
     th, td {
-      padding: 10px;
-      text-align: left;
+      padding: 16px;
+      text-align: center; /* center aligns all columns */
+      border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+      vertical-align: middle;
+      font-size: 15px;
+      word-wrap: break-word;
     }
+
     th {
-      background: #eee;
+      background: rgba(0, 0, 0, 0.3);
       cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
     }
-    button {
-      padding: 10px 20px;
-      border: none;
-      background: #007bff;
-      color: white;
-      border-radius: 5px;
+
+    tr:hover {
+      background: rgba(255, 255, 255, 0.18);
+      transform: scale(1.005);
+      transition: 0.2s ease-in-out;
+    }
+
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 15px;
+      background: #222;
+      color: #fff;
+      border-radius: 8px;
       cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     }
-    button:hover { background: #0056b3; }
-    .resume-link { color: #007bff; text-decoration: none; }
-  </style>
+
+    .dark-mode {
+      background: linear-gradient(135deg, #0f0f0f, #1e1e1e);
+      color: #fff;
+    }
+
+    .dark-mode .container {
+      background: rgba(30, 30, 30, 0.7);
+    }
+
+    .dark-mode input,
+    .dark-mode select {
+      background: #3b3b3b;
+      color: #fff;
+    }
+
+    .dark-mode th {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .dark-mode button {
+      background: #2196f3;
+    }
+    /* Extra Awesome Styling */
+    input, select {
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+
+    tr:hover {
+      transform: scale(1.01);
+      transition: 0.2s ease-in-out;
+    }
+
+    .resume-link {
+      color: #ffeb3b;
+      font-weight: 600;
+      text-decoration: underline;
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.05);
+      background: #444;
+    }
+      /* Unique column colors */
+    td:nth-child(1), th:nth-child(1) { background: rgba(255, 99, 132, 0.15); }
+    td:nth-child(2), th:nth-child(2) { background: rgba(54, 162, 235, 0.15); }
+    td:nth-child(3), th:nth-child(3) { background: rgba(255, 206, 86, 0.15); }
+    td:nth-child(4), th:nth-child(4) { background: rgba(75, 192, 192, 0.15); }
+    td:nth-child(5), th:nth-child(5) { background: rgba(153, 102, 255, 0.15); }
+
+    /* Hover effect keeps unique color */
+    tr:hover td {
+      background-color: rgba(255,255,255,0.25) !important;
+    }
+
+</style>
 </head>
 <body>
+  <button class="theme-toggle" onclick="toggleTheme()">Toggle Theme</button>
   <h1>Job Application Tracker</h1>
   <div class="container">
     <h3>Add New Application</h3>
@@ -72,8 +184,10 @@
       <option value="Selected">Selected</option>
     </select>
 
-    <label>Upload Resume:</label>
-    <input type="file" id="resume" accept="application/pdf" />
+    <div class="input-group">
+      <label>Upload Resume:</label>
+      <input type="file" id="resume" accept="application/pdf" />
+    </div>
 
     <button onclick="addJob()">Add Application</button>
 
@@ -88,6 +202,7 @@
           <th onclick="sortTable(2)">Date</th>
           <th onclick="sortTable(3)">Status</th>
           <th>Resume</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -109,7 +224,8 @@
 
       const reader = new FileReader();
       reader.onload = function(e) {
-        const resumeURL = e.target.result;
+        const blob = new Blob([resume], { type: resume.type });
+        const resumeURL = URL.createObjectURL(blob);
 
         const table = document.querySelector('#jobTable tbody');
         const row = document.createElement('tr');
@@ -120,6 +236,10 @@
           <td>${date}</td>
           <td>${status}</td>
           <td><a href="${resumeURL}" target="_blank" class="resume-link">View</a></td>
+          <td>
+            <button class='edit-btn' onclick='editRow(this)'>Edit</button>
+            <button class='delete-btn' onclick='deleteRow(this)'>Delete</button>
+          </td>
         `;
 
         table.appendChild(row);
@@ -187,6 +307,23 @@
         }
       }
     }
+      function toggleTheme() {
+      document.body.classList.toggle('dark-mode');
+    }
+  
+    function deleteRow(btn) {
+      btn.parentElement.parentElement.remove();
+    }
+
+    function editRow(btn) {
+      const row = btn.parentElement.parentElement;
+      document.getElementById('company').value = row.children[0].textContent;
+      document.getElementById('position').value = row.children[1].textContent;
+      document.getElementById('date').value = row.children[2].textContent;
+      document.getElementById('status').value = row.children[3].textContent;
+      row.remove();
+    }
+
   </script>
 </body>
 </html>
