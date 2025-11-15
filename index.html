@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Job Application Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+    }
+    .container {
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input, select {
+      padding: 10px;
+      width: 100%;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    table, th, td {
+      border: 1px solid #ccc;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background: #eee;
+      cursor: pointer;
+    }
+    button {
+      padding: 10px 20px;
+      border: none;
+      background: #007bff;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover { background: #0056b3; }
+    .resume-link { color: #007bff; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <h1>Job Application Tracker</h1>
+  <div class="container">
+    <h3>Add New Application</h3>
+    <input type="text" id="company" placeholder="Company Name" />
+    <input type="text" id="position" placeholder="Position" />
+    <input type="date" id="date" />
+
+    <select id="status">
+      <option value="Applied">Applied</option>
+      <option value="Interview Scheduled">Interview Scheduled</option>
+      <option value="Rejected">Rejected</option>
+      <option value="Selected">Selected</option>
+    </select>
+
+    <label>Upload Resume:</label>
+    <input type="file" id="resume" accept="application/pdf" />
+
+    <button onclick="addJob()">Add Application</button>
+
+    <h3>Applications</h3>
+    <input type="text" id="search" placeholder="Search by company or position" onkeyup="filterTable()" />
+
+    <table id="jobTable">
+      <thead>
+        <tr>
+          <th onclick="sortTable(0)">Company</th>
+          <th onclick="sortTable(1)">Position</th>
+          <th onclick="sortTable(2)">Date</th>
+          <th onclick="sortTable(3)">Status</th>
+          <th>Resume</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    function addJob() {
+      const company = document.getElementById('company').value;
+      const position = document.getElementById('position').value;
+      const date = document.getElementById('date').value;
+      const status = document.getElementById('status').value;
+      const resume = document.getElementById('resume').files[0];
+
+      if (!company || !position || !date) {
+        alert('Please fill all fields');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const resumeURL = e.target.result;
+
+        const table = document.querySelector('#jobTable tbody');
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+          <td>${company}</td>
+          <td>${position}</td>
+          <td>${date}</td>
+          <td>${status}</td>
+          <td><a href="${resumeURL}" target="_blank" class="resume-link">View</a></td>
+        `;
+
+        table.appendChild(row);
+        document.getElementById('company').value = '';
+        document.getElementById('position').value = '';
+        document.getElementById('date').value = '';
+        document.getElementById('resume').value = '';
+      };
+
+      if (resume) reader.readAsDataURL(resume);
+      else {
+        alert("Upload Resume PDF");
+        return;
+      }
+    }
+
+    function filterTable() {
+      let input = document.getElementById("search").value.toLowerCase();
+      let rows = document.querySelectorAll("#jobTable tbody tr");
+
+      rows.forEach(row => {
+        let company = row.children[0].textContent.toLowerCase();
+        let position = row.children[1].textContent.toLowerCase();
+        row.style.display = (company.includes(input) || position.includes(input)) ? "" : "none";
+      });
+    }
+
+    function sortTable(n) {
+      let table = document.getElementById("jobTable");
+      let switching = true;
+      let dir = "asc";
+      let switchcount = 0;
+
+      while (switching) {
+        switching = false;
+        let rows = table.rows;
+
+        for (let i = 1; i < rows.length - 1; i++) {
+          let shouldSwitch = false;
+          let x = rows[i].getElementsByTagName("TD")[n];
+          let y = rows[i + 1].getElementsByTagName("TD")[n];
+
+          if (dir == "asc") {
+            if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+              shouldSwitch = true;
+              break;
+            }
+          } else if (dir == "desc") {
+            if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+              shouldSwitch = true;
+              break;
+            }
+          }
+        }
+
+        if (shouldSwitch) {
+          rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+          switching = true;
+          switchcount++;
+        } else {
+          if (switchcount === 0 && dir === "asc") {
+            dir = "desc";
+            switching = true;
+          }
+        }
+      }
+    }
+  </script>
+</body>
+</html>
